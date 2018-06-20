@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vue穿梭框案例</title>
+    <style>
+        .transfer {
+            width: 800px;
+            margin: 100px auto;
+            position: relative;
+            line-height: 1.5;
+        }
+        .transfer-list {
+            width: 280px;
+            height: 240px;
+            font-size: 12px;
+            vertical-align: middle;
+            position: relative;
+            padding-top: 35px;
+            display: inline-block;
+        }
+        .transfer-header {
+            box-sizing: border-box;
+            padding: 8px 16px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px 6px 0 0;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+        .transfer-header-title {
+            padding-left: 4px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .transfer-header-count {
+            float: right;
+            margin-right: 4px;
+            font-size: 20px;
+        }
+        .transfer-list-body {
+            height: 100%;
+            border: 1px solid #dddee1;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            position: relative;
+            overflow: hidden;
+        }
+        .transfer-list-content {
+            height: 100%;
+            padding: 4px 0;
+            overflow: auto;
+        }
+        .transfer-list-content-item {
+            margin: 0;
+            line-height: normal;
+            padding: 7px 16px;
+            clear: both;
+            color: #495060;
+            font-size: 16px;
+            white-space: nowrap;
+            list-style: none;
+            cursor: pointer;
+            transition: background .2s ease-in-out;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .transfer-operation {
+            display: inline-block;
+            overflow: hidden;
+            margin: 0 16px;
+            vertical-align: middle;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+
+<body>
+
+<div class="transfer" id="app">
+    <transfer-list v-bind:data="originData" title="源列表"></transfer-list>
+    <div class="transfer-operation">
+        <p><input type="button" value="<" @click="targetToOrigin" /></p>
+        <p><input type="button" value=">" @click="originToTarget" /></p>
+    </div>
+    <transfer-list v-bind:data="targetData" title="目标列表"></transfer-list>
+</div>
+
+<script>
+    let data = {
+
+        // 源列表
+        originData: [
+            {
+                id:101,
+                title: '红色',
+                checked: false
+            },
+            {
+                id:102,
+                title: '黄色',
+                checked: false
+            },
+            {
+                id:103,
+                title: '蓝色',
+                checked: false
+            },
+            {
+                id:104,
+                title: '橙色',
+                checked: true
+            },
+            {
+                id:105,
+                title: '黑色',
+                checked: false
+            },
+            {
+                id:106,
+                title: '红色',
+                checked: false
+            },
+        ],
+
+        // 目标列表
+        targetData: [
+            {
+                id:201,
+                title: '苹果',
+                checked: true
+            },
+            {
+                id:202,
+                title: '荔枝',
+                checked: true
+            },
+            {
+                id:203,
+                title: '香蕉',
+                checked: false
+            },
+            {
+                id:204,
+                title: '石榴',
+                checked: false
+            },
+            {
+                id:205,
+                title: '西瓜',
+                checked: false
+            },
+
+        ]
+    }
+
+    //定义组件
+    // props
+    Vue.component('transfer-list', {
+        props:["title","data"],
+        template: `<div class="transfer-list">
+				<div class="transfer-header">
+					<span class="transfer-header-title">
+						{{title}}
+					</span>
+					<span class="transfer-header-count">
+						{{checkedLength}}/{{data.length}}
+					</span>
+				</div>
+
+				<div class="transfer-list-body">
+					<ul class="transfer-list-content">
+						<li v-for="item in data"
+						 class="transfer-list-content-item">
+							<input type="checkbox"
+							v-model="item.checked" />
+							<span>{{item.title}}</span>
+						</li>
+					</ul>
+				</div>
+			</div>`,
+        computed:{
+            //计算选中的个数
+            checkedLength(){
+               return this.data.filter(item=>item.checked).length
+            }
+        }
+
+    })
+
+    new Vue({
+        el: '#app',
+        data: {
+            ...data
+        },
+        methods:{
+            //目标到源
+            targetToOrigin(){
+                let targetChecked = this.targetData.filter(item =>item.checked).map((item)=>{
+                    return{
+                        ...item,
+                        checked:false
+                    }
+                }); // [{},{}]
+
+                //选中的加到现列表
+                this.originData.push(...targetChecked);
+
+            },
+            //源到目标
+            originToTarget(){
+                let originChecked = this.originData.filter(item =>item.checked).map((item)=>{
+                    return{
+                        ...item,
+                        checked:false
+                    }
+                });
+
+                //选中的加到现列表
+                this.targetData.push(...originChecked);
+
+            }
+        }
+
+    })
+</script>
+</body>
+</html>
