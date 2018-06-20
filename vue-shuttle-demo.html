@@ -210,6 +210,8 @@
 
                 //选中的加到现列表
                 this.originData.push(...targetChecked);
+                //过滤非选中
+                this.targetData = this.targetData.filter((item)=>!item.checked);
 
             },
             //源到目标
@@ -223,6 +225,8 @@
 
                 //选中的加到现列表
                 this.targetData.push(...originChecked);
+                //过滤非选中
+                this.originData = this.originData.filter((item)=>!item.checked);
 
             }
         }
