@@ -199,34 +199,32 @@
             ...data
         },
         methods:{
-            //目标到源
-            targetToOrigin(){
-                let targetChecked = this.targetData.filter(item =>item.checked).map((item)=>{
-                    return{
-                        ...item,
-                        checked:false
-                    }
-                }); // [{},{}]
 
-                //选中的加到现列表
-                this.originData.push(...targetChecked);
-                //过滤非选中
-                this.targetData = this.targetData.filter((item)=>!item.checked);
-
-            },
-            //源到目标
-            originToTarget(){
-                let originChecked = this.originData.filter(item =>item.checked).map((item)=>{
+            //定义共用函数
+            objToObj(obj1,obj2){
+                let targetChecked = obj1.filter(item=>item.checked).map((item)=>{
                     return{
                         ...item,
                         checked:false
                     }
                 });
+                obj2.push(...targetChecked);
 
-                //选中的加到现列表
-                this.targetData.push(...originChecked);
-                //过滤非选中
-                this.originData = this.originData.filter((item)=>!item.checked);
+                return obj1.filter((item)=>!item.checked);
+            },
+
+
+
+            //目标到源
+            targetToOrigin(){
+
+                this.targetData = this.objToObj(this.targetData,this.originData);
+
+            },
+            //源到目标
+            originToTarget(){
+
+                this.originData = this.objToObj(this.originData,this.targetData);
 
             }
         }
